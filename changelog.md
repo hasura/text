@@ -1,4 +1,7 @@
 #### 1.2.3.2
+* Disable implicit fusion rules
+
+### 1.2.4.2
 
 * Special release supporting GHC 8.10.1 / `base-4.14.0.0` only
 

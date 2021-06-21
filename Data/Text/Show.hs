@@ -37,8 +37,12 @@ import qualified GHC.Base as GHC
 instance Show Text where
     showsPrec p ps r = showsPrec p (unpack ps) r
 
--- | /O(n)/ Convert a 'Text' into a 'String'.  Subject to fusion.
-unpack :: Text -> String
+-- | /O(n)/ Convert a 'Text' into a 'String'.
+unpack ::
+#if defined(ASSERTS)
+  HasCallStack =>
+#endif
+  Text -> String
 unpack = S.unstreamList . stream
 {-# INLINE [1] unpack #-}
 
@@ -68,7 +72,7 @@ unpackCString# addr# = unstream (S.streamCString# addr#)
     unstream (S.map safe (S.streamList [a]))
       = singleton_ a #-}
 
--- | /O(1)/ Convert a character into a Text.  Subject to fusion.
+-- | /O(1)/ Convert a character into a Text.
 -- Performs replacement on invalid scalar values.
 singleton :: Char -> Text
 singleton = unstream . S.singleton . safe
