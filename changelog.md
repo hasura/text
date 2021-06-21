@@ -1,3 +1,5 @@
+* Disable implicit fusion rules
+
 ### 1.2.5.0
 
 * [Support sized primitives from GHC 9.2](https://github.com/haskell/text/pull/305)

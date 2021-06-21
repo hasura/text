@@ -120,10 +120,6 @@ decodeUtf8 :: B.ByteString -> Text
 decodeUtf8 = decodeUtf8With strictDecode
 {-# INLINE[0] decodeUtf8 #-}
 
--- This rule seems to cause performance loss.
-{- RULES "LAZY STREAM stream/decodeUtf8' fusion" [1]
-   forall bs. F.stream (decodeUtf8' bs) = E.streamUtf8 strictDecode bs #-}
-
 -- | Decode a 'ByteString' containing UTF-8 encoded text..
 --
 -- If the input contains any invalid UTF-8 data, the relevant
