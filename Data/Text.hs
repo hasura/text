@@ -1147,12 +1147,13 @@ dropEnd n t@(Text arr off len)
 -- returns the longest prefix (possibly empty) of elements that
 -- satisfy @p@.
 takeWhile :: (Char -> Bool) -> Text -> Text
-takeWhile p t@(Text arr off len) = loop 0
-  where loop !i | i >= len    = t
-                | p c         = loop (i+d)
-                | otherwise   = text arr off i
-            where Iter c d    = iter t i
-{-# INLINE [1] takeWhile #-}
+takeWhile p = go where
+  go t@(Text arr off len) = loop 0 where
+    loop !i | i >= len    = t
+            | p c         = loop (i+d)
+            | otherwise   = text arr off i
+        where Iter c d    = iter t i
+{-# INLINE takeWhile #-}
 
 -- | /O(n)/ 'takeWhileEnd', applied to a predicate @p@ and a 'Text',
 -- returns the longest suffix (possibly empty) of elements that
@@ -1164,12 +1165,13 @@ takeWhile p t@(Text arr off len) = loop 0
 --
 -- @since 1.2.2.0
 takeWhileEnd :: (Char -> Bool) -> Text -> Text
-takeWhileEnd p t@(Text arr off len) = loop (len-1) len
-  where loop !i !l | l <= 0    = t
-                   | p c       = loop (i+d) (l+d)
-                   | otherwise = text arr (off+l) (len-l)
-            where (c,d)        = reverseIter t i
-{-# INLINE [1] takeWhileEnd #-}
+takeWhileEnd p = go where
+  go t@(Text arr off len) = loop (len-1) len where
+    loop !i !l | l <= 0    = t
+               | p c       = loop (i+d) (l+d)
+               | otherwise = text arr (off+l) (len-l)
+        where (c,d)        = reverseIter t i
+{-# INLINE takeWhileEnd #-}
 
 {-# RULES
 "TEXT takeWhileEnd -> fused" [~1] forall p t.
@@ -1181,12 +1183,13 @@ takeWhileEnd p t@(Text arr off len) = loop (len-1) len
 -- | /O(n)/ 'dropWhile' @p@ @t@ returns the suffix remaining after
 -- 'takeWhile' @p@ @t@.
 dropWhile :: (Char -> Bool) -> Text -> Text
-dropWhile p t@(Text arr off len) = loop 0 0
-  where loop !i !l | l >= len  = empty
-                   | p c       = loop (i+d) (l+d)
-                   | otherwise = Text arr (off+i) (len-l)
-            where Iter c d     = iter t i
-{-# INLINE [1] dropWhile #-}
+dropWhile p = go where
+  go t@(Text arr off len) = loop 0 0 where
+    loop !i !l | l >= len  = empty
+               | p c       = loop (i+d) (l+d)
+               | otherwise = Text arr (off+i) (len-l)
+        where Iter c d     = iter t i
+{-# INLINE dropWhile #-}
 
 -- | /O(n)/ 'dropWhileEnd' @p@ @t@ returns the prefix remaining after
 -- dropping characters that satisfy the predicate @p@ from the end of
@@ -1197,12 +1200,13 @@ dropWhile p t@(Text arr off len) = loop 0 0
 -- >>> dropWhileEnd (=='.') "foo..."
 -- "foo"
 dropWhileEnd :: (Char -> Bool) -> Text -> Text
-dropWhileEnd p t@(Text arr off len) = loop (len-1) len
-  where loop !i !l | l <= 0    = empty
-                   | p c       = loop (i+d) (l+d)
-                   | otherwise = Text arr off l
-            where (c,d)        = reverseIter t i
-{-# INLINE [1] dropWhileEnd #-}
+dropWhileEnd p = go where
+  go t@(Text arr off len) = loop (len-1) len where
+    loop !i !l | l <= 0    = empty
+               | p c       = loop (i+d) (l+d)
+               | otherwise = Text arr off l
+        where (c,d)        = reverseIter t i
+{-# INLINE dropWhileEnd #-}
 
 {-# RULES
 "TEXT dropWhileEnd -> fused" [~1] forall p t.
